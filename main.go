@@ -21,7 +21,7 @@ func main() {
 	// serve  images from images directory prefixed with /images
 	// i.e http://localhost:4000/images/someimage.webp
 
-	app.Static("/images", "./images")
+	app.Static("/uploads", "./uploads")
 
 	// handle image uploading using post request
 
@@ -33,7 +33,7 @@ func main() {
 
 	// start dev server on port 4000
 
-	log.Fatal(app.Listen(":4000"))
+	log.Fatal(app.Listen(":8083"))
 }
 
 func handleFileupload(c *fiber.Ctx) error {
@@ -63,7 +63,7 @@ func handleFileupload(c *fiber.Ctx) error {
 	image := fmt.Sprintf("%s.%s", filename, fileExt)
 
 	// save image to ./images dir
-	err = c.SaveFile(file, fmt.Sprintf("./images/%s", image))
+	err = c.SaveFile(file, fmt.Sprintf("./uploads/%s", image))
 
 	if err != nil {
 		log.Println("image save error --> ", err)
@@ -72,7 +72,7 @@ func handleFileupload(c *fiber.Ctx) error {
 
 	// generate image url to serve to client using CDN
 
-	imageUrl := fmt.Sprintf("http://localhost:4000/images/%s", image)
+	imageUrl := fmt.Sprintf("http://localhost:8083/uploads/%s", image)
 
 	// create meta data and send to client
 
