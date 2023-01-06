@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func handleFileupload(c *fiber.Ctx) error {
+func (ctl *Controller) handleFileupload(c *fiber.Ctx) error {
 
 	// parse incomming image file
 
@@ -37,7 +37,7 @@ func handleFileupload(c *fiber.Ctx) error {
 	image := fmt.Sprintf("%s.%s", filename, fileExt)
 
 	// save image to ./images dir
-	err = c.SaveFile(file, fmt.Sprintf("./images/%s", image))
+	err = c.SaveFile(file, fmt.Sprintf("./uploads/%s", image))
 
 	if err != nil {
 		log.Println("image save error --> ", err)
@@ -46,7 +46,7 @@ func handleFileupload(c *fiber.Ctx) error {
 
 	// generate image url to serve to client using CDN
 
-	imageUrl := fmt.Sprintf("http://localhost:4000/images/%s", image)
+	imageUrl := fmt.Sprintf("http://localhost:8083/uploads/%s", image)
 
 	// create meta data and send to client
 
@@ -61,7 +61,7 @@ func handleFileupload(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": 201, "message": "Image uploaded successfully", "data": data})
 }
 
-func handleDeleteImage(c *fiber.Ctx) error {
+func (ctl *Controller) handleDeleteImage(c *fiber.Ctx) error {
 	// extract image name from params
 	imageName := c.Params("imageName")
 

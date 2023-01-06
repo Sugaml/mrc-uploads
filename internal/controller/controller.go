@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 type Controller struct {
@@ -16,5 +16,5 @@ func NewController() *Controller {
 }
 
 func (ctl *Controller) Run() {
-	ctl.Router.Listen(":4000")
+	ctl.Router.Listen(":8083")
 }
