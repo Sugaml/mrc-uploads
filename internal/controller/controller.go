@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -16,5 +18,9 @@ func NewController() *Controller {
 }
 
 func (ctl *Controller) Run() {
-	ctl.Router.Listen(":8083")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8083"
+	}
+	ctl.Router.Listen(":" + port)
 }

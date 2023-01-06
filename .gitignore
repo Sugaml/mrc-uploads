@@ -1,0 +1,5 @@
+uploads
+*.mod
+*.sum
+data
+.env
