@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/sugaml/upload-api/internal/controller"
+	"github.com/sugaml/mrc-uploads/internal/controller"
 )
 
 func main() {

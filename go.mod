@@ -1,4 +1,4 @@
-module github.com/sugaml/upload-api
+module github.com/sugaml/mrc-uploads
 
 go 1.18
 
