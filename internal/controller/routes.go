@@ -6,6 +6,6 @@ func (ctl *Controller) InitializeRoutes() {
 	ctl.Router.Static("/uploads", "./uploads")
 	routes := ctl.Router.Group("/uploads")
 	routes.Post("/", ctl.handleFileupload)
-	routes.Post("/multiple", ctl.handleMultipleFileupload)
+	routes.Post("/multiple/:sid", ctl.handleMultipleFileupload)
 	routes.Delete("/:imageName", ctl.handleDeleteImage)
 }
