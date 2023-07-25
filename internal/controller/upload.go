@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 )
 
 func (ctl *Controller) handleFileupload(c *fiber.Ctx) error {
@@ -15,18 +16,39 @@ func (ctl *Controller) handleFileupload(c *fiber.Ctx) error {
 	if err != nil {
 		log.Println("image upload error --> ", err)
 		return c.JSON(fiber.Map{"status": 500, "message": "Server error", "data": nil})
-
 	}
+
+	folder := c.GetRespHeader("X-USER-FOLDER")
+	if folder == "" {
+		folder = "common"
+	}
+
+	basePath := os.Getenv("BASE_FOLDER")
+	if basePath == "" {
+		basePath = "./uploads"
+	}
+
+	// Create the directory if it doesn't exist
+	path := fmt.Sprintf("%s/%s", basePath, folder)
+	if err := os.MkdirAll(path, 0755); err != nil {
+		log.Println("failed to create directory --> ", err)
+		return c.JSON(fiber.Map{"status": 500, "message": "Server error", "data": nil})
+	}
+
 	uniqueId := uuid.New()
 	filename := strings.Replace(uniqueId.String(), "-", "", -1)
 	fileExt := strings.Split(file.Filename, ".")[1]
 	image := fmt.Sprintf("%s.%s", filename, fileExt)
-	err = c.SaveFile(file, fmt.Sprintf("./uploads/%s", image))
+	imageURL := fmt.Sprintf("%s/%s", path, image)
+	logrus.Debugf("Upload image url :: %s", imageURL)
+
+	err = c.SaveFile(file, imageURL)
 	if err != nil {
-		log.Println("image save error --> ", err)
+		logrus.Error("image save error --> ", err)
 		return c.JSON(fiber.Map{"status": 500, "message": "Server error", "data": nil})
 	}
-	imageUrl := fmt.Sprintf(os.Getenv("BASE_URL")+"/uploads/%s", image)
+
+	imageUrl := fmt.Sprintf(os.Getenv("BASE_URL")+"/%s/%s", path, image)
 	data := map[string]interface{}{
 		"name":    image,
 		"fileUrl": imageUrl,
@@ -100,7 +122,6 @@ func (ctl *Controller) handleMultipleFileupload(c *fiber.Ctx) error {
 
 	// create meta data and send to client
 	data := map[string]interface{}{
-
 		"imageName": image,
 		"imageUrl":  imageUrl,
 		"signUrl":   signUrl,
